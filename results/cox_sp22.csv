@@ -1,0 +1,9 @@
+,coeff,SE,p-value,CI_lower,CI_upper
+class_positivity,0.27,0.89,0.77,-1.49,2.02
+academic_career_GM,0.31,0.39,0.42,-0.46,1.08
+academic_career_GR,-0.75,0.42,0.08,-1.57,0.08
+academic_career_LA,0.08,0.37,0.83,-0.64,0.80
+academic_career_UG_A,-0.24,0.42,0.56,-1.07,0.58
+academic_career_UG_G,0.88,0.16,0.00,0.56,1.19
+academic_career_VM,-0.54,0.59,0.36,-1.69,0.61
+current_gender_M,-0.07,0.14,0.64,-0.35,0.22
