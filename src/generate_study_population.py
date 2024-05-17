@@ -5,13 +5,13 @@ from utils import string_to_date
 
 def generate_study_population_fa21():
 
-    oncampus_fa21 = pd.read_csv("../data/data_fa21/on_campus_student_days_fa21.csv")
+    oncampus_fa21 = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_fa21/on_campus_student_days_fa21.csv")
 
     # drop individuals with unknown sex
     study_population = oncampus_fa21[(oncampus_fa21["current_gender"]!="U")]
     
     # drop individuals not enrolled in classes
-    class_registrations = pd.read_csv("../data/data_fa21/class_registration_fa21.csv")
+    class_registrations = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_fa21/class_registration_fa21.csv")
     class_registrations.drop_duplicates(inplace=True, ignore_index=True)
     enrolled_ids = class_registrations[
         (~class_registrations["subject"].isna())
@@ -22,7 +22,7 @@ def generate_study_population_fa21():
     # mark individuals who (1) participate in surveillance testing and
     # (2) are not no-action-positive as to be included;
     # we do not drop them for now because they contribute to class_positivity
-    surv_tests_fa21_raw = pd.read_csv("../data/data_fa21/surveillance_tests_fa21.csv")
+    surv_tests_fa21_raw = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_fa21/surveillance_tests_fa21.csv")
     cmc_test_ids_to_drop = [
         'CHANGE_LEVEL', 'NAPPED-EXCLUDE', 'NITH', 'RESET DEPARTURE', 'NOT_TESTED',
         'EXEMPT-CH', 'testing-pause-workday', 'EXEMPT-red', 'EXEMPT-NITH',
@@ -59,15 +59,15 @@ def generate_study_population_fa21():
     study_population_.reset_index(drop=True, inplace=True)
 
     # add academic_career info, including Greek/athlete membership
-    old_features = pd.read_csv("../data/data_fa21/1110_all_covariates_finalized.csv", index_col=0)
+    old_features = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_fa21/1110_all_covariates_finalized.csv", index_col=0)
     academic_careers = old_features[["employee_id_hash","academic_career"]].drop_duplicates()
     study_population_ = study_population_.merge(
         academic_careers, 
         how = "left", 
         on = "employee_id_hash")
-    greek_empids = pd.read_csv('../data/data_fa21/hashed_greek_empIDs_fa21.csv', header=None)
+    greek_empids = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/hashed_greek_empIDs_fa21.csv', header=None)
     greek_empids = set(greek_empids[0])
-    athlete_empids = pd.read_csv('../data/data_fa21/hashed_athlete_empIDs_fa21.csv', header=None)
+    athlete_empids = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/hashed_athlete_empIDs_fa21.csv', header=None)
     athlete_empids = set(athlete_empids[0])
     for i in range(len(study_population_)):
         if study_population_.loc[i, 'employee_id_hash'] in greek_empids:
@@ -80,19 +80,19 @@ def generate_study_population_fa21():
             continue
 
     # save data
-    study_population_.to_csv("../data/data_fa21/study_population_finalized_fa21.csv")
+    study_population_.to_csv("G:/Data_Peter/classroom_transmission/data/data_fa21/study_population_finalized_fa21.csv")
 
 
 def generate_study_population_sp22():
 
-    oncampus_sp22 = pd.read_csv("../data/data_sp22/on_campus_student_days_sp22.csv")
+    oncampus_sp22 = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_sp22/on_campus_student_days_sp22.csv")
     oncampus_sp22 = oncampus_sp22[oncampus_sp22["day_idx"] != '2022-02-21 00:00:00.000']
 
     # drop individuals with unknown sex
     study_population = oncampus_sp22[(oncampus_sp22["current_gender"]!="U")]
 
     # drop individuals not enrolled in classes
-    class_registrations = pd.read_csv("../data/data_sp22/class_registration_sp22.csv", index_col=0)
+    class_registrations = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_sp22/class_registration_sp22.csv", index_col=0)
     class_registrations.drop_duplicates(inplace=True, ignore_index=True)
     class_registrations["EMPLOYEE_ID_STDNT_HASH"] = class_registrations["EMPLOYEE_ID_STDNT_HASH"].apply(lambda x: "0x"+x.upper())
     class_registrations_clean_1 = class_registrations.loc[
@@ -105,7 +105,7 @@ def generate_study_population_sp22():
     # mark individuals who (1) participate in surveillance testing and
     # (2) are not no-action-positive as to be included;
     # we do not drop them for now because they contribute to class_positivity
-    surv_tests_sp22_raw = pd.read_csv("../data/data_sp22/surveillance_tests_sp22.csv")
+    surv_tests_sp22_raw = pd.read_csv("G:/Data_Peter/classroom_transmission/data/data_sp22/surveillance_tests_sp22.csv")
     cmc_test_ids_to_drop = [
         'CHANGE_LEVEL', 'NAPPED-EXCLUDE', 'ARRIVAL-DATE-CHANGE', 'NITH', 
         'RESET DEPARTURE', 'CHNG TEST DAY', 'CHNG TST DAY', 'NOT_TESTED', 
@@ -155,9 +155,9 @@ def generate_study_population_sp22():
     )
     student_academic_careers.reset_index(drop=True, inplace=True)
     study_population = study_population.merge(student_academic_careers, on = "employee_id_hash")
-    greek_empids = pd.read_csv('../data/data_sp22/hashed_greek_empIDs_sp22.csv', header=None)
+    greek_empids = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_sp22/hashed_greek_empIDs_sp22.csv', header=None)
     greek_empids = set(greek_empids[0])
-    athlete_empids = pd.read_csv('../data/data_sp22/hashed_athlete_empIDs_sp22.csv', header=None)
+    athlete_empids = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_sp22/hashed_athlete_empIDs_sp22.csv', header=None)
     athlete_empids = set(athlete_empids[0])
     for i in range(len(study_population)):
         if study_population.loc[i, 'employee_id_hash'] in greek_empids:
@@ -166,4 +166,4 @@ def generate_study_population_sp22():
             study_population.loc[i, 'academic_career'] = 'UG_A'
 
     # save data
-    study_population.to_csv("../data/data_sp22/study_population_finalized_sp22.csv")
+    study_population.to_csv("G:/Data_Peter/classroom_transmission/data/data_sp22/study_population_finalized_sp22.csv")

@@ -6,11 +6,11 @@ from datetime import date
 def process_class_schedule_data(semester):
 
     if semester == "fa21":
-        read_path = '../data/data_fa21/class_schedule_fa21.xlsx'
-        write_path = '../data/data_fa21/class_schedule_fa21.csv'
+        read_path = 'G:/Data_Peter/classroom_transmission/data/data_fa21/class_schedule_fa21.xlsx'
+        write_path = 'G:/Data_Peter/classroom_transmission/data/data_fa21/class_schedule_fa21.csv'
     elif semester == "sp22":
-        read_path = '../data/data_sp22/class_schedule_sp22.xlsx'
-        write_path = '../data/data_sp22/class_schedule_sp22.csv'
+        read_path = 'G:/Data_Peter/classroom_transmission/data/data_sp22/class_schedule_sp22.xlsx'
+        write_path = 'G:/Data_Peter/classroom_transmission/data/data_sp22/class_schedule_sp22.csv'
 
     courses = pd.read_excel(read_path)
 

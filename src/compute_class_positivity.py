@@ -1,7 +1,7 @@
 import numpy as np
 import datetime as dt
 import pandas as pd
-from utils import date_to_reg_time_fa21, date_to_reg_time_sp22, string_to_date
+from src.utils import date_to_reg_time_fa21, date_to_reg_time_sp22, string_to_date
 
 """
 Use separate functions for each semester because the data have subtle differences.
@@ -10,14 +10,14 @@ Use separate functions for each semester because the data have subtle difference
 def compute_class_positivity_fa21(T_e=7, T_a=7):
 
     # load student features and class registration data
-    all_students_classes = pd.read_csv('../data/data_fa21/class_registration_fa21.csv')
+    all_students_classes = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/class_registration_fa21.csv')
     all_students_classes.drop_duplicates(inplace = True)
-    all_students_features = pd.read_csv('../data/data_fa21/study_population_finalized_fa21.csv', index_col = 0) 
+    all_students_features = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/study_population_finalized_fa21.csv', index_col = 0) 
     positive_students = all_students_features[all_students_features["infected_on_this_day"]==1].reset_index(drop=True)
 
     # load and process class schedule
-    class_schedule = pd.read_csv('../data/data_fa21/class_schedule_fa21.csv', index_col = 0)
-    enrollment = pd.read_csv('../data/data_fa21/class_registration_fa21.csv', index_col = 0)
+    class_schedule = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/class_schedule_fa21.csv', index_col = 0)
+    enrollment = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_fa21/class_registration_fa21.csv', index_col = 0)
     enrollment = enrollment.reset_index(drop = True)
     class_schedule_enrollment = enrollment[['subject', 'catalog_nbr', 'class_section', 'class_enroll_tot']].drop_duplicates()
     class_schedule['Section'] = class_schedule['Section'].astype('string')
@@ -165,8 +165,8 @@ def compute_class_positivity_fa21(T_e=7, T_a=7):
                 # case 1: if within the active period (hd_date-T_a, hd_date), subtract the student him/herself from the numerator 
                 # case 2: if before the active period, i.e., before hd_date-T_a, no need to substract oneself from the numerator 
                 if is_positive == 1:
-                    # if identified within T_e days of start of study period, only case 1
-                    if hd_notify_reg_time <= T_e-1:
+                    # if identified within T_a days of start of study period, only case 1
+                    if hd_notify_reg_time <= T_a-1:
                         pre_notify_prev_history = daily_class_hours * \
                             (class_positive_history[[str(t) for t in np.arange(hd_notify_reg_time+1)]] - 1) / (enrollment_count-1)
                     # otherwise, consider both case 1 and case 2 and concatenate the results
@@ -204,13 +204,7 @@ def compute_class_positivity_fa21(T_e=7, T_a=7):
     all_students_features = all_students_features[all_students_features["include"]==True]
     all_students_features.reset_index(inplace=True, drop=True)
 
-    # NEEDED? compute campus positivity
-
-
-
-    all_students_features.to_csv(f"../data/data_fa21/all_students_features_T_e={T_e}_finalized.csv")
-
-
+    all_students_features.to_csv(f"G:/Data_Peter/classroom_transmission/data/data_fa21/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv")
 
 
 
@@ -218,14 +212,14 @@ def compute_class_positivity_fa21(T_e=7, T_a=7):
 def compute_class_positivity_sp22(T_e=7, T_a=7):
 
     # load student features and class registration data
-    all_students_classes = pd.read_csv('../data/data_sp22/class_registration_sp22.csv', index_col = 0)
+    all_students_classes = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_sp22/class_registration_sp22.csv', index_col = 0)
     all_students_classes.drop_duplicates(inplace = True)
-    all_students_features = pd.read_csv('../data/data_sp22/study_population_finalized_sp22.csv', index_col = 0) 
+    all_students_features = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_sp22/study_population_finalized_sp22.csv', index_col = 0) 
     positive_students = all_students_features[all_students_features["infected_on_this_day"]==1].reset_index(drop=True)
 
     # load and process class schedule
-    class_schedule = pd.read_csv('../data/data_sp22/class_schedule_sp22.csv', index_col = 0)
-    class_schedule_enrollment = pd.read_csv('../data/simulated_schedule_data_SP22.csv', index_col = 0)[['SUBJECT','CATALOG_NBR','CLASS_SECTION','CLASS_ENROLL_TOT']]
+    class_schedule = pd.read_csv('G:/Data_Peter/classroom_transmission/data/data_sp22/class_schedule_sp22.csv', index_col = 0)
+    class_schedule_enrollment = pd.read_csv('G:/Data_Peter/classroom_transmission/data/simulated_schedule_data_SP22.csv', index_col = 0)[['SUBJECT','CATALOG_NBR','CLASS_SECTION','CLASS_ENROLL_TOT']]
     class_schedule['Section'] = class_schedule['Section'].astype('string')
     # strip leading zeros
     class_schedule['Section'] = class_schedule['Section'].str.lstrip("0")
@@ -367,8 +361,8 @@ def compute_class_positivity_sp22(T_e=7, T_a=7):
                 # case 1: if within the active period (hd_date-T_a, hd_date), subtract the student him/herself from the numerator 
                 # case 2: if before the active period, i.e., before hd_date-T_a, no need to substract oneself from the numerator 
                 if is_positive == 1:
-                    # if identified within T_e days of start of study period, only case 1
-                    if hd_notify_reg_time <= T_e-1:
+                    # if identified within T_a days of start of study period, only case 1
+                    if hd_notify_reg_time <= T_a-1:
                         pre_notify_prev_history = daily_class_hours * \
                             (class_positive_history[[str(t) for t in np.arange(hd_notify_reg_time+1)]] - 1) / (enrollment_count-1)
                     # otherwise, consider both case 1 and case 2 and concatenate the results
@@ -406,7 +400,4 @@ def compute_class_positivity_sp22(T_e=7, T_a=7):
     all_students_features = all_students_features[all_students_features["include"]==True]
     all_students_features.reset_index(inplace=True, drop=True)
 
-    # NEEDED? compute campus positivity
-
-
-    all_students_features.to_csv(f"../data/data_sp22/all_students_features_T_e={T_e}_finalized.csv")
+    all_students_features.to_csv(f"G:/Data_Peter/classroom_transmission/data/data_sp22/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv")

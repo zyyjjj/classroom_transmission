@@ -6,8 +6,8 @@ import statsmodels.api as sm
 from lifelines import CoxTimeVaryingFitter
 
 
-def run_cox_regression(semester='fa21', T_e=7, verbose=True):
-    all_covariates = pd.read_csv(f'../data/data_{semester}/all_students_features_T_e={T_e}_finalized.csv', index_col = 0)
+def run_cox_regression(semester='fa21', T_e=7, T_a=7, verbose=True):
+    all_covariates = pd.read_csv(f'G:/Data_Peter/classroom_transmission/data/data_{semester}/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv', index_col = 0)
     df = all_covariates[['current_gender', 'academic_career','employee_id_hash','day_idx','hd_notify_date','class_positivity', 'infected_on_this_day']]
     if semester == 'fa21':
         baseline_date = dt.datetime.strptime('2021-08-26', '%Y-%m-%d').toordinal()
@@ -28,13 +28,15 @@ def run_cox_regression(semester='fa21', T_e=7, verbose=True):
     
     if verbose:
         ctv.print_summary()
+    
+    avg_class_positivity = df['class_positivity'].mean()
 
-    return ctv
+    return ctv, avg_class_positivity
 
 
-def run_cox_regression_pooled(T_e=7, verbose=True):
-    all_covariates_fa = pd.read_csv(f'../data/data_fa21/all_students_features_T_e={T_e}_finalized.csv', index_col = 0)
-    all_covariates_sp = pd.read_csv(f'../data/data_sp22/all_students_features_T_e={T_e}_finalized.csv', index_col = 0)
+def run_cox_regression_pooled(T_e=7, T_a=7, verbose=True):
+    all_covariates_fa = pd.read_csv(f'G:/Data_Peter/classroom_transmission/data/data_fa21/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv', index_col = 0)
+    all_covariates_sp = pd.read_csv(f'G:/Data_Peter/classroom_transmission/data/data_sp22/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv', index_col = 0)
 
     df = pd.concat([all_covariates_fa, all_covariates_sp], ignore_index=True)
     df = df[['current_gender', 'academic_career','employee_id_hash','day_idx','hd_notify_date','class_positivity', 'infected_on_this_day']]
@@ -57,12 +59,14 @@ def run_cox_regression_pooled(T_e=7, verbose=True):
     if verbose:
         ctv.print_summary()
 
-    return ctv
+    avg_class_positivity = df['class_positivity'].mean()
+
+    return ctv, avg_class_positivity
 
 
-def run_gee_logistic_regression(semester='fa21', T_e=7, time_control='day', verbose=True):
+def run_gee_logistic_regression(semester='fa21', T_e=7, T_a=7, time_control='day', verbose=True):
 
-    all_covariates = pd.read_csv(f'../data/data_{semester}/all_students_features_T_e={T_e}_finalized.csv', index_col = 0)
+    all_covariates = pd.read_csv(f'G:/Data_Peter/classroom_transmission/data/data_{semester}/all_students_features_T_e={T_e}_T_a={T_a}_finalized.csv', index_col = 0)
     df = all_covariates[['current_gender', 'academic_career','employee_id_hash','day_idx','week_idx','hd_notify_date','class_positivity', 'infected_on_this_day', 'campus_positivity']]
 
     if semester == 'fa21':
